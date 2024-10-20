@@ -16,7 +16,7 @@ class TextNode:
 
 	def __eq__(self, other):
 		return (
-			self.text_type == other.text_type.value
+			self.text_type.value == other.text_type.value
 			and self.text == other.text
 			and self.url == other.url
 		)

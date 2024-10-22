@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
@@ -78,6 +78,57 @@ class TestHTMLNode(unittest.TestCase):
         with self.assertRaises(ValueError):
             node.to_html()
 
+    def test_parentNode(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ]
+        )
+        self.assertEqual(
+            node.to_html(),
+            "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>",
+        )
+
+    def test_no_children(self):
+        node = ParentNode(
+            "div",
+            None,
+        )
+        with self.assertRaises(ValueError):
+            node.to_html()
+    
+    def test_nested_parents(self):
+        node = ParentNode(
+            "div",
+            [
+                LeafNode("b", "YOU SHALL NOT PASS!"),
+                ParentNode("i", [
+                    LeafNode("i", "unless I say so"),
+                ]),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+        self.assertEqual(
+            node.to_html(),
+            '<div><b>YOU SHALL NOT PASS!</b><i><i>unless I say so</i></i>Normal text</div>',
+        )
+
+    def test_parent_props(self):
+        node = ParentNode(
+            "div",
+            [
+                LeafNode("b", "Here we go again..."),
+            ],
+            {"href": "https://www.google.com"}
+        )
+        self.assertEqual(
+            node.to_html(),
+            '<div href="https://www.google.com"><b>Here we go again...</b></div>'
+        )
 
 if __name__ == "__main__":
     unittest.main()

@@ -41,13 +41,13 @@ class ParentNode(HTMLNode):
 
     def to_html(self):
         if self.tag is None:
-            raise ValueError("A tag is required")
+            raise ValueError("Invalid HTML: no tag")
         if self.children is None:
-            raise ValueError("children required")
-        leaf = ""
+            raise ValueError("Invalid HTML: no children")
+        children_html = ""
         for item in self.children:
-            if isinstance(item, LeafNode):
-                leaf += item.to_html()
-            if isinstance(item, ParentNode):
-                leaf += item.to_html()
-        return f"<{self.tag}{HTMLNode.props_to_html(self)}>{leaf}</{self.tag}>"
+            children_html += item.to_html()
+        return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
+    
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
